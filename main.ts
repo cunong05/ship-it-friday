@@ -19,10 +19,13 @@ if (ENTRY.trim().length === 0) {
   throw new Error("ENTRY must not be whitespace-only");
 }
 
-const outDir = join(process.cwd(), "output");
+const outDir = "/output"; // Absolute: the gate reads /output/entry.txt, never a repo-relative path.
 mkdirSync(outDir, { recursive: true });
 
 const outPath = join(outDir, "entry.txt");
+if (!outPath.startsWith("/output/")) {
+  throw new Error("outPath must be under /output");
+}
 writeFileSync(outPath, ENTRY, "utf8");
 
 // Read back and verify byte-identical.
@@ -35,5 +38,8 @@ function verifyEntry(path, expected) {
 }
 
 verifyEntry(outPath, ENTRY);
+if (Buffer.from(readFileSync(outPath, "utf8"), "utf8").length !== Buffer.from(ENTRY, "utf8").length) {
+  throw new Error("byte length mismatch: entry.txt differs from ENTRY");
+}
 
 console.log(`Wrote ${outPath} (${ENTRY.length} characters)`);
