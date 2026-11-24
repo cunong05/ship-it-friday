@@ -1,0 +1,1 @@
+feat: ship it Friday — tests pass on my machine, which is the only machine that matters. Deploying now. See you Monday, probably.
